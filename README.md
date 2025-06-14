@@ -1,155 +1,125 @@
+# AI-Powered Fitness Assistant
 
-# AI-Powered Fitness Assistant (Colab Notebook)
-
-An AI-enabled fitness assistant built entirely in a Google Colab Notebook using LLM agents and vector search to help users manage health profiles, store notes, and receive personalized answers to fitness-related questions.
+An intelligent, personalized fitness assistant that leverages multi-agent collaboration, vector search, and LLM reasoning to help users manage their fitness journey through note-taking, contextual Q&A, and live web integration.
 
 ---
 
 ## Problem Statement
 
-Users often struggle to consistently track their fitness data, organize logs, and receive relevant guidance tailored to their goals. Existing solutions either lack personalization or fail to leverage external context like live search results. This project bridges that gap by integrating retrieval-augmented generation and intelligent decision routing in an interactive notebook environment.
+Staying on track with fitness goals is difficult without tailored advice and a centralized place to store personal insights. Users often maintain notes in scattered places and struggle to get answers that consider their unique profile and history.
+
+This project solves that by building a personal fitness agent that:
+- Understands your goals, body metrics, and history
+- Provides personalized answers to your fitness questions
+- Decides intelligently when to bring in web data for enhanced context
+
+AI agents are ideal here because they can:
+- Manage user context dynamically
+- Make autonomous decisions about resource use (internal data vs web)
+- Deliver accurate, concise, and personal recommendations
+
+Multi-agent collaboration enables modular, scalable task handling—where each agent independently contributes to the final response based on its specialization.
 
 ---
 
-## Why AI Agents?
+## Project Description
 
-This solution utilizes AI agents to:
-- Contextually respond to user queries using profile data and stored notes
-- Detect when information is insufficient and trigger a live web search
-- Seamlessly orchestrate multi-step reasoning using LangGraph
+The application is a Gradio-based AI assistant for fitness enthusiasts.
 
-### Why Multi-Agent Architecture?
+It includes:
 
-Multi-agent design enables:
-- Modular role-specific agents (retriever, router, responder, searcher)
-- Conditional decision-making on whether to include web search
-- Greater control over flow, context management, and debugging
+- Profile Management: Age, height, weight, and fitness goals
+- Note Storage & Retrieval: Store fitness logs, training notes, etc., in a vector DB
+- Personalized Q&A: Ask fitness questions and get tailored answers
+- Web-enhanced Reasoning: When personal data isn’t enough, the app fetches real-time info using search
 
----
+### Agent Workflow (LangGraph)
 
-## Application Overview
+1. Context Loader Agent  
+   Loads user profile and retrieves relevant notes from AstraDB.
 
-**Environment**: Google Colab  
-**Interface**: Gradio (launched inside Colab)  
-**Workflow Engine**: LangGraph  
-**LLM**: LLaMA3-70B via Groq API  
-**Vector Store**: Astra DB (CassandraDB)  
-**Embedding Model**: all-MiniLM-L6-v2 (via HuggingFace)  
-**Web Search**: SerpAPI  
+2. Routing Agent  
+   Uses an LLM to decide if the system has enough context to answer or needs a web search.
 
----
+3. Web Search Agent  
+   Queries SERP API for additional context when needed.
 
-## Features
-
-- User profile setup (age, height, weight, fitness goal)
-- Note submission with timestamp and vector embedding
-- Intelligent question answering using LLM + retrieved context
-- Dynamic web search fallback when profile data is insufficient
-- Notes view and deletion via interactive interface
+4. Answer Generator Agent  
+   Synthesizes a final answer using profile, notes, and web results.
 
 ---
 
-## Agent Workflow
+## Tools, Libraries & Frameworks
 
-| Agent              | Responsibility                               |
-|-------------------|-----------------------------------------------|
-| Context Loader     | Fetches user profile and relevant notes      |
-| Routing Agent      | Determines if web search is needed           |
-| Web Search Agent   | Gathers latest information using SerpAPI     |
-| Answer Agent       | Synthesizes final response from all inputs   |
-
-### Flow Structure
-
-[User Question]  
-↓  
-[Load Context (Profile + Notes)]  
-↓  
-[Routing Agent]  
-┌────────────┬────────────┐  
-↓            ↓  
-NO_WEB     USE_WEB  
-↓            ↓  
-[Answer Agent]     [Search Web]  
-↓                    ↓  
-└──────> [Answer Agent] ────> Final Answer
+| Tool | Purpose |
+|------|---------|
+| LangChain | Core agent orchestration |
+| LangGraph | Multi-agent workflow engine |
+| Gradio | Frontend UI |
+| Cassandra (AstraDB) | Vector storage for user notes |
+| Cassio | LangChain-AstraDB integration |
+| HuggingFace Embeddings | Embedding model for notes |
+| SERP API | Web search results |
+| Groq + LLaMA3-70B | Fast and powerful LLM backend |
+| dotenv | Secret key management |
 
 ---
 
-## Tools and Libraries
+## LLM Selection
 
-- LangChain: Agent logic and vector database integrations
-- LangGraph: Agent orchestration and conditional workflow
-- Gradio: UI elements in Colab
-- Cassio + Astra DB: Vector store backend
-- HuggingFace: Embedding model provider
-- SerpAPI: Live search functionality
-- ChatGroq: LLaMA3-based LLM provider
+### Ideal LLM
 
----
+- GPT-4 Turbo or Claude 3 Opus  
+  Chosen for:
+  - Strong contextual memory
+  - Precise and health-safe reasoning
+  - Adaptability to user-specific queries
 
-## LLM Justification
+### Current LLM
 
-**Ideal LLMs for Production:**
-- GPT-4, Claude 3 Opus — excellent for multi-turn reasoning, reliability, and longer contexts
+- LLaMA3-70B via Groq  
+  - High-speed, low-latency generation
+  - Strong reasoning capabilities
+  - Ideal for real-time apps
 
-**Free Tier Used in Development:**
-- LLaMA3-70B-8192 via Groq — good speed, cost-effective, handles large contexts reasonably well
+### Free / Open Source Alternatives
 
-**Reason for Choice:**
-LLaMA3 via Groq provides a balance of performance and accessibility for iterative development inside Colab.
+| Model | Platform | Notes |
+|-------|----------|-------|
+| GPT-3.5 | OpenAI | Good fallback with lower cost |
+| Gemini Pro | Google Cloud | Useful for broader expansion |
+| Mistral / Mixtral | HuggingFace | Great for local or private deployments |
 
 ---
 
 ## How to Run
 
-### 1. Open the Notebook
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/fitness-agent-app.git
+   cd fitness-agent-app
+   ```
 
-> [Colab Notebook Link](https://colab.research.google.com/drive/1_vHt2x6pDxB7Eoog-yUQ9-LK4tfumkjk)
+2. Install requirements:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 2. Install Required Libraries
+3. Add your .env file with:
+   ```env
+   ASTRA_DB_ID=your_db_id
+   ASTRA_DB_APPLICATION_TOKEN=your_token
+   SERPAPI_API_KEY=your_serpapi_key
+   GROQ_API_KEY=your_groq_key
+   ```
 
-```python
-!pip install gradio langchain langgraph langchain_huggingface \
-langchain_community cassio cassandra-driver \
-chromadb transformers accelerate tiktoken \
-langchain_groq google-search-results
-```
-
-### 3. Set API Keys (Groq & SerpAPI)
-
-```python
-from google.colab import userdata
-groq_api_key = userdata.get("groq_api_key")
-serp_api_key = userdata.get("serp_api_key")
-```
-
-### 4. Run the Notebook Cells in Order
-
-The Gradio interface will launch within the notebook.
-
----
-
-## Future Enhancements
-
-- Integration with health trackers (Fitbit, Apple Health, etc.)
-- Recommendation agents for diet and workout routines
-- Adding feedback loop using memory agents
-- Higher-order planning via CrewAI or AutoGen
+4. Run the app:
+   ```bash
+   python app.py
+   ```
 
 ---
 
 ## License
 
-This project is licensed under the MIT License.
-
----
-
-## Acknowledgements
-
-- LangChain
-- LangGraph
-- HuggingFace
-- Astra DB by DataStax
-- Gradio
-- Groq
-- SerpAPI
+MIT License © 2025 Your Name
