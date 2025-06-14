@@ -122,15 +122,6 @@ Each agent functions independently and contributes to the shared state through t
 
 ---
 
-## Future Extensions
-
-- Meal planning agents
-- Workout recommendation agents
-- Injury prevention with wearable integration
-- Support for image/video inputs via multimodal LLMs
-
----
-
 ## License
 
 MIT License © 2025 Utkarsh
