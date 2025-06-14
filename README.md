@@ -97,7 +97,6 @@ It includes:
 1. Clone the repository:
    ```bash
    git clone https://github.com/Ut14/AI-Powered-Fitness-Assistant.git
-   cd fitness-agent-app
    ```
 
 2. Install requirements:
